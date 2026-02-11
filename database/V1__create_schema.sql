@@ -35,7 +35,7 @@ CREATE TABLE users (
     email       VARCHAR(255)  NOT NULL UNIQUE,
     password    VARCHAR(255)  NOT NULL,
     role        VARCHAR(20)   NOT NULL
-                    CHECK (role IN ('ADMIN_LOJA', 'CLIENTE')),
+                    CHECK (role IN ('SUPER_ADMIN', 'ADMIN_LOJA', 'CLIENTE')),
     phone       VARCHAR(20),
     store_id    UUID          REFERENCES stores(id) ON DELETE SET NULL,
     created_at  TIMESTAMP     NOT NULL DEFAULT NOW(),
@@ -49,10 +49,11 @@ CREATE INDEX idx_users_store_id ON users (store_id);
 -- 3. CATEGORIES
 -- ============================================================
 CREATE TABLE categories (
-    id        UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name      VARCHAR(100) NOT NULL,
-    store_id  UUID         NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
-    created_at TIMESTAMP   NOT NULL DEFAULT NOW()
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name        VARCHAR(100) NOT NULL,
+    store_id    UUID         NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    created_at  TIMESTAMP    NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP    NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX idx_categories_store_id ON categories (store_id);
@@ -123,7 +124,8 @@ CREATE TABLE order_items (
     unit_price  DECIMAL(12, 2) NOT NULL CHECK (unit_price >= 0),
     order_id    UUID           NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     product_id  UUID           NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
-    created_at  TIMESTAMP      NOT NULL DEFAULT NOW()
+    created_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP      NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX idx_order_items_order_id   ON order_items (order_id);
@@ -143,10 +145,61 @@ CREATE TABLE addresses (
     zip_code    VARCHAR(9)   NOT NULL,
     user_id     UUID         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     is_default  BOOLEAN      NOT NULL DEFAULT FALSE,
-    created_at  TIMESTAMP    NOT NULL DEFAULT NOW()
+    created_at  TIMESTAMP    NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP    NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX idx_addresses_user_id ON addresses (user_id);
+
+-- ============================================================
+-- 8. PLANS (Planos de assinatura da plataforma)
+-- ============================================================
+CREATE TABLE plans (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name            VARCHAR(50)    NOT NULL UNIQUE,
+    description     TEXT,
+    price           DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
+    max_products    INTEGER        NOT NULL DEFAULT 50,
+    max_orders_month INTEGER       NOT NULL DEFAULT 100,
+    features        JSONB          DEFAULT '{}',
+    active          BOOLEAN        NOT NULL DEFAULT TRUE,
+    created_at      TIMESTAMP      NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMP      NOT NULL DEFAULT NOW()
+);
+
+-- Planos padrão
+INSERT INTO plans (name, description, price, max_products, max_orders_month) VALUES
+    ('FREE',       'Plano gratuito com recursos limitados',    0.00,   10,   20),
+    ('BASIC',      'Plano básico para pequenos lojistas',     49.90,   50,  200),
+    ('PREMIUM',    'Plano premium com recursos avançados',   149.90,  500, 2000),
+    ('ENTERPRISE', 'Plano empresarial sem limites',          399.90, -1,   -1);
+
+-- ============================================================
+-- 9. SUBSCRIPTIONS (Assinaturas das lojas)
+-- ============================================================
+CREATE TABLE subscriptions (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    store_id        UUID           NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    plan_id         UUID           NOT NULL REFERENCES plans(id) ON DELETE RESTRICT,
+    status          VARCHAR(20)    NOT NULL DEFAULT 'ACTIVE'
+                        CHECK (status IN (
+                            'ACTIVE',
+                            'PAST_DUE',
+                            'CANCELLED',
+                            'EXPIRED',
+                            'TRIAL'
+                        )),
+    starts_at       TIMESTAMP      NOT NULL DEFAULT NOW(),
+    expires_at      TIMESTAMP,
+    cancelled_at    TIMESTAMP,
+    created_at      TIMESTAMP      NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMP      NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_subscriptions_store_id ON subscriptions (store_id);
+CREATE INDEX idx_subscriptions_status   ON subscriptions (status);
+CREATE UNIQUE INDEX uq_active_subscription_per_store
+    ON subscriptions (store_id) WHERE status IN ('ACTIVE', 'TRIAL');
 
 -- ============================================================
 -- TRIGGER: Validação Cross-Tenant (Produto ↔ Categoria)
@@ -241,4 +294,24 @@ CREATE TRIGGER trg_products_updated_at
 
 CREATE TRIGGER trg_orders_updated_at
     BEFORE UPDATE ON orders
+    FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+
+CREATE TRIGGER trg_plans_updated_at
+    BEFORE UPDATE ON plans
+    FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+
+CREATE TRIGGER trg_subscriptions_updated_at
+    BEFORE UPDATE ON subscriptions
+    FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+
+CREATE TRIGGER trg_categories_updated_at
+    BEFORE UPDATE ON categories
+    FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+
+CREATE TRIGGER trg_order_items_updated_at
+    BEFORE UPDATE ON order_items
+    FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();
+
+CREATE TRIGGER trg_addresses_updated_at
+    BEFORE UPDATE ON addresses
     FOR EACH ROW EXECUTE FUNCTION fn_update_timestamp();

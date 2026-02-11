@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: saas-ecommerce
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/saas_ecommerce
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: filesystem:../database
+    baseline-on-migrate: true
+
+# RSA PKCS12 Keystore para JWT
+jwt:
+  keystore-path: classpath:keys/keystore.p12
+  keystore-password: changeit
+  key-alias: jwt
+  expiration: 86400000 # 24 horas
+
+# Springdoc OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+server:
+  port: 8080
+  error:
+    include-message: always

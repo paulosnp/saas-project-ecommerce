@@ -7,10 +7,11 @@ Plataforma SaaS onde pequenos comerciantes criam suas próprias lojas virtuais.
 ```
 saas-project-ecommerce/
 ├── database/               → Scripts DDL (Flyway)
-├── backend/                → Java 17+ / Spring Boot 3 (API REST)
+├── backend/                → Java 21 / Spring Boot 3.2+ (API REST)
 ├── frontend/
 │   ├── admin-panel/        → Angular 17+ (Painel do Lojista)
-│   └── storefront/         → Angular 17+ (Loja Virtual do Cliente)
+│   ├── storefront/         → Angular 17+ (Loja Virtual do Cliente)
+│   └── super-admin/        → Angular 17+ (Painel do Dono da Plataforma)
 └── README.md
 ```
 
@@ -18,23 +19,25 @@ saas-project-ecommerce/
 
 | Camada      | Tecnologias                                     |
 |:------------|:------------------------------------------------|
-| Backend     | Java 17+, Spring Boot 3, Spring Security (JWT), Spring Data JPA, Lombok |
-| Database    | PostgreSQL (Multi-tenant: schema compartilhado, coluna `store_id`)      |
+| Backend     | Java 21, Spring Boot 3.2+, Spring Security (JWT RSA), Spring Data JPA, MapStruct, Lombok |
+| Database    | PostgreSQL (Multi-tenant: Hibernate Filters + coluna `store_id`)      |
 | Frontend    | Angular 17+ (Standalone Components)             |
 | Pagamentos  | Mercado Pago (Split de pagamento)                |
 | Frete       | Melhor Envio (Cotação de frete)                  |
 
 ## 🗄️ Modelagem de Dados
 
-| Tabela         | Descrição                                    |
-|:---------------|:---------------------------------------------|
-| `stores`       | Lojas (tenant raiz)                          |
-| `users`        | Usuários (ADMIN_LOJA e CLIENTE)              |
-| `categories`   | Categorias de produto por loja               |
-| `products`     | Produtos com estoque e dimensões             |
-| `orders`       | Pedidos com status e rastreio                |
-| `order_items`  | Itens do pedido (N:N entre orders/products)  |
-| `addresses`    | Endereços de entrega do cliente              |
+| Tabela          | Descrição                                    |
+|:----------------|:---------------------------------------------|
+| `stores`        | Lojas (tenant raiz)                          |
+| `users`         | Usuários (SUPER_ADMIN, ADMIN_LOJA, CLIENTE)  |
+| `categories`    | Categorias de produto por loja               |
+| `products`      | Produtos com estoque e dimensões             |
+| `orders`        | Pedidos com status e rastreio                |
+| `order_items`   | Itens do pedido (N:N entre orders/products)  |
+| `addresses`     | Endereços de entrega do cliente              |
+| `plans`         | Planos de assinatura da plataforma           |
+| `subscriptions` | Assinaturas das lojas (vínculo store ↔ plan) |
 
 > **Isolamento Multi-tenant:** Trigger functions garantem que produtos só referenciam categorias da mesma loja.
 
