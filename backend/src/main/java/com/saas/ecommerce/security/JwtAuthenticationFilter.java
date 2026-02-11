@@ -59,6 +59,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
 
+            // Fallback: Se não tem tenant no token, tenta header X-Store-ID (Storefront)
+            if (TenantContext.getCurrentTenant() == null) {
+                String storeHeader = request.getHeader("X-Store-ID");
+                if (StringUtils.hasText(storeHeader)) {
+                    try {
+                        UUID storeId = UUID.fromString(storeHeader);
+                        TenantContext.setCurrentTenant(storeId);
+                        log.debug("TenantContext setado via Header: store_id={}", storeId);
+                    } catch (IllegalArgumentException e) {
+                        log.warn("Header X-Store-ID inválido: {}", storeHeader);
+                    }
+                }
+            }
+
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {

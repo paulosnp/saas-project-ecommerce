@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saas.ecommerce.config.TestRsaKeyConfig;
 import com.saas.ecommerce.entity.Category;
 import com.saas.ecommerce.entity.Store;
+import com.saas.ecommerce.repository.OrderRepository;
 import com.saas.ecommerce.entity.User;
 import com.saas.ecommerce.enums.UserRole;
 import com.saas.ecommerce.repository.CategoryRepository;
@@ -62,6 +63,8 @@ public abstract class AbstractIntegrationTest {
     @Autowired
     protected ProductRepository productRepository;
     @Autowired
+    protected OrderRepository orderRepository;
+    @Autowired
     protected JwtTokenProvider tokenProvider;
     @Autowired
     protected PasswordEncoder passwordEncoder;
@@ -98,6 +101,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected void cleanDatabase() {
+        orderRepository.deleteAll();
         productRepository.deleteAll();
         categoryRepository.deleteAll();
         userRepository.deleteAll();

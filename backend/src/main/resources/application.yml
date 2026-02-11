@@ -42,3 +42,15 @@ server:
   port: 8080
   error:
     include-message: always
+
+integration:
+  mercado-pago:
+    notification-base-url: https://api.saas-ecommerce.com
+    back-url-success: https://store.saas-ecommerce.com/checkout/success
+    back-url-failure: https://store.saas-ecommerce.com/checkout/failure
+    back-url-pending: https://store.saas-ecommerce.com/checkout/pending
+    platform-access-token: TEST-0000000000000000-000000-00000000000000000000000000000000-000000000 # Token do Super Admin
+
+  melhor-envio:
+    base-url: https://sandbox.melhorenvio.com.br
+    user-agent: SaaS Ecommerce (contato@saas-ecommerce.com)

@@ -62,6 +62,13 @@
             <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
 
+        <!-- Mercado Pago SDK -->
+        <dependency>
+            <groupId>com.mercadopago</groupId>
+            <artifactId>sdk-java</artifactId>
+            <version>2.1.28</version>
+        </dependency>
+
         <!-- JWT (RSA) -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

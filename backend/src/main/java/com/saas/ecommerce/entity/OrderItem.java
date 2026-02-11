@@ -23,17 +23,17 @@ public class OrderItem extends BaseEntity {
     @Column(name = "unit_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal unitPrice;
 
-    @Column(name = "order_id", nullable = false)
+    @Column(name = "order_id", insertable = false, updatable = false)
     private UUID orderId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", insertable = false, updatable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @Column(name = "product_id", nullable = false)
+    @Column(name = "product_id", insertable = false, updatable = false)
     private UUID productId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 }

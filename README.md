@@ -47,6 +47,6 @@ saas-project-ecommerce/
 - [x] **Fase 2** — Backend: Entidades JPA e Repositórios
 - [x] **Fase 3** — Backend: Autenticação e Segurança (JWT)
 - [x] **Fase 4** — Backend: CRUD de Produtos e Categorias
-- [ ] **Fase 5** — Backend: Pedidos e Integrações (Mercado Pago, Melhor Envio)
+- [x] **Fase 5** — Backend: Pedidos e Integrações (Mercado Pago, Melhor Envio)
 - [ ] **Fase 6** — Frontend: Admin Panel
 - [ ] **Fase 7** — Frontend: Storefront

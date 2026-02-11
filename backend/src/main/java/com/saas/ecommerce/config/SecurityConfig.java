@@ -39,8 +39,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/storefront/**").permitAll()
+                        .requestMatchers("/api/webhooks/**").permitAll()
                         .requestMatchers("/api/super-admin/**").hasAuthority("SUPER_ADMIN")
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN_LOJA")
+                        .requestMatchers("/api/customer/**").authenticated()
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

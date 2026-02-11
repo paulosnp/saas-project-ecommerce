@@ -52,6 +52,14 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(InsufficientStockException.class)
+    public ProblemDetail handleInsufficientStock(InsufficientStockException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Estoque Insuficiente");
+        problem.setType(URI.create("https://api.saas-ecommerce.com/errors/conflict"));
+        return problem;
+    }
+
     @ExceptionHandler(TenantViolationException.class)
     public ProblemDetail handleTenantViolation(TenantViolationException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
