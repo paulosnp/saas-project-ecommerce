@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import {
     CategoryRequest, CategoryResponse,
     ProductRequest, ProductResponse,
-    OrderResponse, DashboardResponse, Page
+    OrderResponse, DashboardResponse, Page,
+    StoreSettingsRequest, StoreSettingsResponse
 } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -72,5 +73,14 @@ export class ApiService {
 
     updateOrderStatus(id: string, status: string): Observable<OrderResponse> {
         return this.http.put<OrderResponse>(`/api/admin/orders/${id}/status`, { status });
+    }
+
+    // Store Settings
+    getStoreSettings(): Observable<StoreSettingsResponse> {
+        return this.http.get<StoreSettingsResponse>('/api/admin/store/settings');
+    }
+
+    updateStoreSettings(settings: StoreSettingsRequest): Observable<StoreSettingsResponse> {
+        return this.http.put<StoreSettingsResponse>('/api/admin/store/settings', settings);
     }
 }

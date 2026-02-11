@@ -105,3 +105,25 @@ export interface Page<T> {
     first: boolean;
     last: boolean;
 }
+
+export interface StoreSettingsRequest {
+    name: string;
+    slugUrl: string;
+    primaryColor?: string;
+    logoUrl?: string;
+    bannerUrl?: string;
+    mercadoPagoToken?: string;
+    melhorEnvioToken?: string;
+}
+
+export interface StoreSettingsResponse {
+    id: string;
+    name: string;
+    slugUrl: string;
+    primaryColor: string;
+    logoUrl: string;
+    bannerUrl: string;
+    mercadoPagoToken: string;
+    melhorEnvioToken: string;
+    active: boolean;
+}
