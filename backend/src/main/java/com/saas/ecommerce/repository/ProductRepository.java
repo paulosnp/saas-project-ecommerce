@@ -24,4 +24,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     Optional<Product> findByIdAndStoreIdForUpdate(UUID id, UUID storeId);
 
     long countByStoreId(UUID storeId);
+
+    long countByStoreIdAndActiveTrue(UUID storeId);
 }
