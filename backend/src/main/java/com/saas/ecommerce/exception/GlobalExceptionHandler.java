@@ -44,6 +44,14 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ProblemDetail handleDuplicate(DuplicateResourceException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Recurso Duplicado");
+        problem.setType(URI.create("https://api.saas-ecommerce.com/errors/conflict"));
+        return problem;
+    }
+
     @ExceptionHandler(TenantViolationException.class)
     public ProblemDetail handleTenantViolation(TenantViolationException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());

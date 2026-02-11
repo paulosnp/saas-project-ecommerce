@@ -44,9 +44,9 @@ saas-project-ecommerce/
 ## 🚀 Fases do Projeto
 
 - [x] **Fase 1** — Modelagem de Dados e Configuração (DDL)
-- [ ] **Fase 2** — Backend: Entidades JPA e Repositórios
-- [ ] **Fase 3** — Backend: Autenticação e Segurança (JWT)
-- [ ] **Fase 4** — Backend: CRUD de Produtos e Categorias
+- [x] **Fase 2** — Backend: Entidades JPA e Repositórios
+- [x] **Fase 3** — Backend: Autenticação e Segurança (JWT)
+- [x] **Fase 4** — Backend: CRUD de Produtos e Categorias
 - [ ] **Fase 5** — Backend: Pedidos e Integrações (Mercado Pago, Melhor Envio)
 - [ ] **Fase 6** — Frontend: Admin Panel
 - [ ] **Fase 7** — Frontend: Storefront
