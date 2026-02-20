@@ -127,3 +127,57 @@ export interface StoreSettingsResponse {
     melhorEnvioToken: string;
     active: boolean;
 }
+
+export interface CustomerSummaryResponse {
+    customerId: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    totalOrders: number;
+    totalSpent: number;
+    lastOrderDate: string;
+}
+
+export interface CustomerOrderResponse {
+    orderId: string;
+    status: string;
+    total: number;
+    createdAt: string;
+    items: OrderItemResponse[];
+}
+
+export interface FinancialResponse {
+    totalRevenue: number;
+    revenueToday: number;
+    revenueLast7Days: number;
+    revenueLast30Days: number;
+    totalOrders: number;
+    ordersCompleted: number;
+    ordersCancelled: number;
+    ordersPending: number;
+    averageOrderValue: number;
+}
+
+export interface MySubscriptionResponse {
+    subscriptionId: string;
+    status: string;
+    startsAt: string;
+    expiresAt: string;
+    cancelledAt: string;
+    planName: string;
+    planDescription: string;
+    planPrice: number;
+    maxProducts: number;
+    maxOrdersMonth: number;
+}
+
+export interface PlanResponse {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    maxProducts: number;
+    maxOrdersMonth: number;
+    active: boolean;
+}
+

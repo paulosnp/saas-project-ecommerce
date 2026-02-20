@@ -31,4 +31,17 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     long countByStoreIdAndCreatedAtAfter(UUID storeId, LocalDateTime after);
 
     List<Order> findTop5ByStoreIdOrderByCreatedAtDesc(UUID storeId);
+
+    // Customer queries
+    @Query("SELECT DISTINCT o.customerId FROM Order o WHERE o.storeId = :storeId")
+    List<UUID> findDistinctCustomerIdsByStoreId(UUID storeId);
+
+    List<Order> findAllByStoreIdAndCustomerIdOrderByCreatedAtDesc(UUID storeId, UUID customerId);
+
+    // Financial queries
+    @Query("SELECT COALESCE(SUM(o.total), 0) FROM Order o WHERE o.storeId = :storeId AND o.status IN :statuses AND o.createdAt >= :after")
+    BigDecimal sumTotalByStoreIdAndStatusInAndCreatedAtAfter(UUID storeId, List<OrderStatus> statuses,
+            LocalDateTime after);
+
+    long countByStoreIdAndStatusIn(UUID storeId, List<OrderStatus> statuses);
 }

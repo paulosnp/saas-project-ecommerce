@@ -5,7 +5,10 @@ import {
     CategoryRequest, CategoryResponse,
     ProductRequest, ProductResponse,
     OrderResponse, DashboardResponse, Page,
-    StoreSettingsRequest, StoreSettingsResponse
+    StoreSettingsRequest, StoreSettingsResponse,
+    CustomerSummaryResponse, CustomerOrderResponse,
+    FinancialResponse,
+    MySubscriptionResponse, PlanResponse
 } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -82,5 +85,32 @@ export class ApiService {
 
     updateStoreSettings(settings: StoreSettingsRequest): Observable<StoreSettingsResponse> {
         return this.http.put<StoreSettingsResponse>('/api/admin/store/settings', settings);
+    }
+
+    // Customers
+    getCustomers(): Observable<CustomerSummaryResponse[]> {
+        return this.http.get<CustomerSummaryResponse[]>('/api/admin/customers');
+    }
+
+    getCustomerOrders(id: string): Observable<CustomerOrderResponse[]> {
+        return this.http.get<CustomerOrderResponse[]>(`/api/admin/customers/${id}/orders`);
+    }
+
+    // Financial
+    getFinancialSummary(): Observable<FinancialResponse> {
+        return this.http.get<FinancialResponse>('/api/admin/financial');
+    }
+
+    // Subscription
+    getMySubscription(): Observable<MySubscriptionResponse> {
+        return this.http.get<MySubscriptionResponse>('/api/admin/my-subscription');
+    }
+
+    getAvailablePlans(): Observable<PlanResponse[]> {
+        return this.http.get<PlanResponse[]>('/api/admin/plans');
+    }
+
+    changePlan(planId: string): Observable<MySubscriptionResponse> {
+        return this.http.put<MySubscriptionResponse>('/api/admin/my-subscription/change-plan', { planId });
     }
 }
