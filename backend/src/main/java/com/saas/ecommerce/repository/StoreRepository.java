@@ -11,4 +11,6 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
     Optional<Store> findBySlugUrl(String slugUrl);
 
     boolean existsBySlugUrl(String slugUrl);
+
+    long countByActive(Boolean active);
 }

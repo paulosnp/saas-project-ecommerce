@@ -76,6 +76,14 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ProblemDetail handleIllegalState(IllegalStateException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problem.setTitle("Operação Não Permitida");
+        problem.setType(URI.create("https://api.saas-ecommerce.com/errors/bad-request"));
+        return problem;
+    }
+
     @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
     public ProblemDetail handleAuthentication(org.springframework.security.core.AuthenticationException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED,

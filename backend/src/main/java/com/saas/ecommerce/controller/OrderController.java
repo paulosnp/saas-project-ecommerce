@@ -61,7 +61,7 @@ public class OrderController {
 
     @GetMapping("/admin/orders")
     @Operation(summary = "Listar pedidos da loja (Admin)")
-    @PreAuthorize("hasAuthority('ADMIN_LOJA')")
+    @PreAuthorize("hasAnyAuthority('ADMIN_LOJA', 'SUPER_ADMIN')")
     public Page<OrderResponse> listStoreOrders(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return orderService.findAllByStore(pageable);
@@ -69,14 +69,14 @@ public class OrderController {
 
     @GetMapping("/admin/orders/{id}")
     @Operation(summary = "Detalhes do pedido (Admin)")
-    @PreAuthorize("hasAuthority('ADMIN_LOJA')")
+    @PreAuthorize("hasAnyAuthority('ADMIN_LOJA', 'SUPER_ADMIN')")
     public OrderResponse getStoreOrder(@PathVariable UUID id) {
         return orderService.findById(id);
     }
 
     @PutMapping("/admin/orders/{id}/status")
     @Operation(summary = "Atualizar status do pedido (Admin)")
-    @PreAuthorize("hasAuthority('ADMIN_LOJA')")
+    @PreAuthorize("hasAnyAuthority('ADMIN_LOJA', 'SUPER_ADMIN')")
     public OrderResponse updateStatus(@PathVariable UUID id,
             @Valid @RequestBody UpdateOrderStatusRequest request) {
         return orderService.updateStatus(id, request);

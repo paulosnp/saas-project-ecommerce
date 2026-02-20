@@ -4,6 +4,8 @@ import com.saas.ecommerce.audit.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 
@@ -34,6 +36,7 @@ public class Plan extends BaseEntity {
     private Integer maxOrdersMonth = 100;
 
     @Builder.Default
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private String features = "{}";
 

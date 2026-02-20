@@ -1,22 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
-interface Plan {
-    id: string;
-    name: string;
-    price: number;
-    period: string;
-    description: string;
-    features: string[];
-    highlight: boolean;
-    badge?: string;
+interface PlanResponse {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  maxProducts: number;
+  maxOrdersMonth: number;
+  active: boolean;
 }
 
 @Component({
-    selector: 'app-plans',
-    standalone: true,
-    imports: [RouterLink],
-    template: `
+  selector: 'app-plans',
+  standalone: true,
+  imports: [RouterLink],
+  template: `
     <div class="plans-page">
       <div class="plans-header">
         <a routerLink="/login" class="back-link">
@@ -38,44 +38,62 @@ interface Plan {
         </div>
       </div>
 
-      <div class="plans-grid">
-        @for (plan of plans; track plan.id) {
-          <div class="plan-card" [class.highlight]="plan.highlight">
-            @if (plan.badge) {
-              <div class="plan-badge">{{ plan.badge }}</div>
-            }
-            <div class="plan-header">
-              <h2>{{ plan.name }}</h2>
-              <p class="plan-desc">{{ plan.description }}</p>
-            </div>
-            <div class="plan-price">
-              <span class="currency">R$</span>
-              <span class="amount">{{ plan.price }}</span>
-              <span class="period">/ {{ plan.period }}</span>
-            </div>
-            <ul class="plan-features">
-              @for (feature of plan.features; track feature) {
-                <li>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                  {{ feature }}
-                </li>
+      @if (loading()) {
+        <div class="loading"><div class="spinner"></div></div>
+      } @else {
+        <div class="plans-grid" [class.grid-2]="plans().length === 2" [class.grid-4]="plans().length >= 4">
+          @for (plan of plans(); track plan.id; let i = $index) {
+            <div class="plan-card" [class.highlight]="isHighlighted(i)">
+              @if (isHighlighted(i)) {
+                <div class="plan-badge">Mais popular</div>
               }
-            </ul>
-            <a [routerLink]="['/register']" [queryParams]="{ plan: plan.id }" class="btn" [class]="plan.highlight ? 'btn-primary' : 'btn-secondary'" style="width:100%">
-              Começar agora
-            </a>
-          </div>
-        }
-      </div>
+              <div class="plan-header">
+                <h2>{{ plan.name }}</h2>
+                @if (plan.description) {
+                  <p class="plan-desc">{{ plan.description }}</p>
+                }
+              </div>
+              <div class="plan-price">
+                <span class="currency">R$</span>
+                <span class="amount">{{ formatPrice(plan.price) }}</span>
+                <span class="period">/ mês</span>
+              </div>
+              <ul class="plan-features">
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  {{ plan.maxProducts === -1 ? 'Produtos ilimitados' : 'Até ' + plan.maxProducts + ' produtos' }}
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  {{ plan.maxOrdersMonth === -1 ? 'Pedidos ilimitados' : 'Até ' + plan.maxOrdersMonth + ' pedidos/mês' }}
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Integração Mercado Pago
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Loja virtual personalizada
+                </li>
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Suporte por e-mail
+                </li>
+              </ul>
+              <a [routerLink]="['/register']" [queryParams]="{ plan: plan.id }" class="btn" [class]="isHighlighted(i) ? 'btn-primary' : 'btn-secondary'" style="width:100%">
+                Começar agora
+              </a>
+            </div>
+          }
+        </div>
+      }
 
       <p class="plans-footer">
         Todos os planos incluem suporte por e-mail. Cancele a qualquer momento.
       </p>
     </div>
   `,
-    styles: [`
+  styles: [`
     .plans-page {
       min-height: 100vh;
       background: var(--bg-page);
@@ -87,7 +105,7 @@ interface Plan {
 
     .plans-header {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1100px;
       margin-bottom: 40px;
     }
 
@@ -133,13 +151,33 @@ interface Plan {
       margin: 0 auto;
     }
 
+    .loading {
+      display: flex;
+      justify-content: center;
+      padding: 60px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .plans-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
-      max-width: 1000px;
+      max-width: 1100px;
       width: 100%;
     }
+
+    .plans-grid.grid-2 { grid-template-columns: repeat(2, 1fr); max-width: 700px; }
+    .plans-grid.grid-4 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 
     .plan-card {
       position: relative;
@@ -183,9 +221,7 @@ interface Plan {
       letter-spacing: 0.05em;
     }
 
-    .plan-header {
-      margin-bottom: 20px;
-    }
+    .plan-header { margin-bottom: 20px; }
 
     .plan-header h2 {
       font-size: 1.25rem;
@@ -274,60 +310,34 @@ interface Plan {
     }
   `]
 })
-export class PlansComponent {
-    plans: Plan[] = [
-        {
-            id: 'starter',
-            name: 'Starter',
-            price: 49,
-            period: 'mês',
-            description: 'Ideal para quem está começando',
-            highlight: false,
-            features: [
-                'Até 50 produtos',
-                'Até 100 pedidos/mês',
-                '1 usuário administrador',
-                'Integração Mercado Pago',
-                'Suporte por e-mail',
-                'Loja virtual personalizada'
-            ]
-        },
-        {
-            id: 'pro',
-            name: 'Pro',
-            price: 99,
-            period: 'mês',
-            description: 'Para lojas em crescimento',
-            highlight: true,
-            badge: 'Mais popular',
-            features: [
-                'Até 500 produtos',
-                'Pedidos ilimitados',
-                '3 usuários administradores',
-                'Integração Mercado Pago',
-                'Integração Melhor Envio',
-                'Relatórios avançados',
-                'Suporte prioritário',
-                'Domínio personalizado'
-            ]
-        },
-        {
-            id: 'enterprise',
-            name: 'Enterprise',
-            price: 199,
-            period: 'mês',
-            description: 'Para operações de grande escala',
-            highlight: false,
-            features: [
-                'Produtos ilimitados',
-                'Pedidos ilimitados',
-                'Usuários ilimitados',
-                'Todas as integrações',
-                'API dedicada',
-                'Suporte 24/7 via chat',
-                'Gerente de conta dedicado',
-                'SLA garantido de 99.9%'
-            ]
-        }
-    ];
+export class PlansComponent implements OnInit {
+  private http = inject(HttpClient);
+
+  plans = signal<PlanResponse[]>([]);
+  loading = signal(true);
+
+  ngOnInit() {
+    this.http.get<PlanResponse[]>('/api/auth/plans').subscribe({
+      next: (plans) => {
+        // Filter out FREE plan (price 0) from display, sort by price
+        const displayPlans = plans
+          .filter(p => p.price > 0)
+          .sort((a, b) => a.price - b.price);
+        this.plans.set(displayPlans);
+        this.loading.set(false);
+      },
+      error: () => { this.loading.set(false); }
+    });
+  }
+
+  isHighlighted(index: number): boolean {
+    // Highlight the middle plan (most popular)
+    const len = this.plans().length;
+    if (len <= 2) return index === len - 1;
+    return index === Math.floor(len / 2);
+  }
+
+  formatPrice(price: number): string {
+    return Math.floor(price).toString();
+  }
 }

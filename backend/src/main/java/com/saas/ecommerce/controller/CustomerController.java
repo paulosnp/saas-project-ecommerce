@@ -18,7 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "Admin - Clientes")
 @SecurityRequirement(name = "bearerAuth")
-@PreAuthorize("hasAuthority('ADMIN_LOJA')")
+@PreAuthorize("hasAnyAuthority('ADMIN_LOJA', 'SUPER_ADMIN')")
 public class CustomerController {
 
     private final CustomerService customerService;

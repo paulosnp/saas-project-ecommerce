@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/webhooks/**").permitAll()
                         .requestMatchers("/api/uploads/**").permitAll()
                         .requestMatchers("/api/super-admin/**").hasAuthority("SUPER_ADMIN")
-                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN_LOJA")
+                        .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN_LOJA", "SUPER_ADMIN")
                         .requestMatchers("/api/customer/**").authenticated()
                         .requestMatchers(
                                 "/swagger-ui/**",

@@ -1,5 +1,6 @@
 package com.saas.ecommerce.integration.mercadopago;
 
+import com.saas.ecommerce.service.PlatformSettingsService;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
@@ -35,6 +36,7 @@ public class MercadoPagoService {
     private final OrderRepository orderRepository;
     private final StoreRepository storeRepository;
     private final ProductRepository productRepository;
+    private final PlatformSettingsService platformSettingsService;
 
     @Value("${integration.mercado-pago.notification-base-url}")
     private String notificationBaseUrl;
@@ -48,8 +50,20 @@ public class MercadoPagoService {
     @Value("${integration.mercado-pago.back-url-pending}")
     private String backUrlPending;
 
-    @Value("${integration.mercado-pago.platform-access-token}")
-    private String platformAccessToken;
+    @Value("${integration.mercado-pago.platform-access-token:}")
+    private String platformAccessTokenFallback;
+
+    /**
+     * Gets the platform access token: first from DB, then from properties as
+     * fallback.
+     */
+    private String getPlatformAccessToken() {
+        String dbToken = platformSettingsService.getMercadoPagoAccessToken();
+        if (dbToken != null && !dbToken.isBlank()) {
+            return dbToken;
+        }
+        return platformAccessTokenFallback;
+    }
 
     @Transactional
     public PaymentResponse createOrderPreference(UUID orderId) {
@@ -202,7 +216,7 @@ public class MercadoPagoService {
         // For simplicity in this phase, we'll treat it as a Checkout Preference for the
         // plan value
 
-        MercadoPagoConfig.setAccessToken(platformAccessToken);
+        MercadoPagoConfig.setAccessToken(getPlatformAccessToken());
 
         // Fetch subscription and plan logic here (omitted for brevity, requires
         // SubscriptionRepository)
@@ -214,7 +228,7 @@ public class MercadoPagoService {
     @Transactional
     public void processSubscriptionWebhook(WebhookPayload payload) {
         // Verify with platform token
-        MercadoPagoConfig.setAccessToken(platformAccessToken);
+        MercadoPagoConfig.setAccessToken(getPlatformAccessToken());
 
         // Logic to update Subscription status based on payment
         log.info("Processando webhook de assinatura: {}", payload.getId());

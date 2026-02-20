@@ -21,7 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "Admin - Minha Assinatura")
 @SecurityRequirement(name = "bearerAuth")
-@PreAuthorize("hasAuthority('ADMIN_LOJA')")
+@PreAuthorize("hasAnyAuthority('ADMIN_LOJA', 'SUPER_ADMIN')")
 public class MySubscriptionController {
 
     private final SubscriptionService subscriptionService;

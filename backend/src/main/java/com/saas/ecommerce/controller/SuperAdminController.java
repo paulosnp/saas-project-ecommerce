@@ -5,13 +5,16 @@ import com.saas.ecommerce.dto.plan.PlanResponse;
 import com.saas.ecommerce.dto.store.StoreResponse;
 import com.saas.ecommerce.dto.subscription.SubscriptionRequest;
 import com.saas.ecommerce.dto.subscription.SubscriptionResponse;
+import com.saas.ecommerce.entity.Plan;
 import com.saas.ecommerce.entity.Store;
 import com.saas.ecommerce.entity.Subscription;
 import com.saas.ecommerce.enums.SubscriptionStatus;
 import com.saas.ecommerce.exception.ResourceNotFoundException;
+import com.saas.ecommerce.repository.PlanRepository;
 import com.saas.ecommerce.repository.StoreRepository;
 import com.saas.ecommerce.repository.SubscriptionRepository;
 import com.saas.ecommerce.service.PlanService;
+import com.saas.ecommerce.service.PlatformSettingsService;
 import com.saas.ecommerce.service.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -25,9 +28,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/super-admin")
@@ -40,6 +42,8 @@ public class SuperAdminController {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionService subscriptionService;
     private final PlanService planService;
+    private final PlatformSettingsService platformSettingsService;
+    private final PlanRepository planRepository;
 
     // ========== LOJAS ==========
 
@@ -114,12 +118,116 @@ public class SuperAdminController {
         return ResponseEntity.ok(planService.update(id, request));
     }
 
+    @GetMapping("/plans/{id}/subscriptions-count")
+    @Operation(summary = "Contar assinaturas ativas de um plano")
+    public ResponseEntity<Map<String, Object>> getPlanSubscriptionsCount(@PathVariable UUID id) {
+        long count = planService.countActiveSubscriptions(id);
+        return ResponseEntity.ok(Map.of("count", count));
+    }
+
+    @DeleteMapping("/plans/{id}")
+    @Operation(summary = "Excluir plano (com migração opcional)")
+    public ResponseEntity<Void> deletePlan(@PathVariable UUID id,
+            @RequestParam(required = false) UUID migrateTo) {
+        planService.delete(id, migrateTo);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ========== DASHBOARD ==========
+
+    @GetMapping("/dashboard")
+    @Operation(summary = "KPIs do dashboard")
+    public ResponseEntity<Map<String, Object>> getDashboard() {
+        long totalStores = storeRepository.count();
+        long activeStores = storeRepository.countByActive(true);
+
+        List<Subscription> allSubs = subscriptionRepository.findAll();
+        long activeSubs = allSubs.stream()
+                .filter(s -> s.getStatus() == SubscriptionStatus.ACTIVE).count();
+        long trialSubs = allSubs.stream()
+                .filter(s -> s.getStatus() == SubscriptionStatus.TRIAL).count();
+        long cancelledSubs = allSubs.stream()
+                .filter(s -> s.getStatus() == SubscriptionStatus.CANCELLED).count();
+        long expiredSubs = allSubs.stream()
+                .filter(s -> s.getStatus() == SubscriptionStatus.EXPIRED).count();
+
+        // Estimated monthly revenue from active subscriptions
+        BigDecimal monthlyRevenue = allSubs.stream()
+                .filter(s -> s.getStatus() == SubscriptionStatus.ACTIVE || s.getStatus() == SubscriptionStatus.TRIAL)
+                .map(s -> planRepository.findById(s.getPlanId())
+                        .map(Plan::getPrice).orElse(BigDecimal.ZERO))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Plan distribution
+        Map<String, Long> planDistribution = new LinkedHashMap<>();
+        allSubs.stream()
+                .filter(s -> s.getStatus() == SubscriptionStatus.ACTIVE || s.getStatus() == SubscriptionStatus.TRIAL)
+                .forEach(s -> {
+                    String planName = planRepository.findById(s.getPlanId())
+                            .map(Plan::getName).orElse("Desconhecido");
+                    planDistribution.merge(planName, 1L, Long::sum);
+                });
+
+        Map<String, Object> dashboard = new LinkedHashMap<>();
+        dashboard.put("totalStores", totalStores);
+        dashboard.put("activeStores", activeStores);
+        dashboard.put("activeSubscriptions", activeSubs);
+        dashboard.put("trialSubscriptions", trialSubs);
+        dashboard.put("cancelledSubscriptions", cancelledSubs);
+        dashboard.put("expiredSubscriptions", expiredSubs);
+        dashboard.put("monthlyRevenue", monthlyRevenue);
+        dashboard.put("planDistribution", planDistribution);
+
+        return ResponseEntity.ok(dashboard);
+    }
+
+    // ========== CONFIGURAÇÕES ==========
+
+    @GetMapping("/settings")
+    @Operation(summary = "Obter configurações da plataforma")
+    public ResponseEntity<Map<String, Object>> getSettings() {
+        String rawToken = platformSettingsService.getMercadoPagoAccessToken();
+        Map<String, Object> settings = new LinkedHashMap<>();
+        settings.put("mercadoPagoToken", platformSettingsService.maskToken(rawToken));
+        settings.put("mercadoPagoConfigured", !rawToken.isBlank());
+        return ResponseEntity.ok(settings);
+    }
+
+    @PutMapping("/settings")
+    @Operation(summary = "Atualizar configurações da plataforma")
+    public ResponseEntity<Map<String, Object>> updateSettings(@RequestBody Map<String, String> body) {
+        if (body.containsKey("mercadoPagoToken")) {
+            String token = body.get("mercadoPagoToken");
+            if (token != null && !token.isBlank()) {
+                platformSettingsService.set(
+                        PlatformSettingsService.KEY_MP_ACCESS_TOKEN,
+                        token,
+                        "Access Token do Mercado Pago da plataforma");
+            }
+        }
+
+        // Return updated (masked) settings
+        String rawToken = platformSettingsService.getMercadoPagoAccessToken();
+        Map<String, Object> settings = new LinkedHashMap<>();
+        settings.put("mercadoPagoToken", platformSettingsService.maskToken(rawToken));
+        settings.put("mercadoPagoConfigured", !rawToken.isBlank());
+        return ResponseEntity.ok(settings);
+    }
+
     // ========== HELPERS ==========
 
     private StoreResponse toStoreResponse(Store store) {
         Subscription activeSub = subscriptionRepository
                 .findByStoreIdAndStatus(store.getId(), SubscriptionStatus.ACTIVE)
                 .orElse(null);
+
+        String planName = "SEM PLANO";
+        String subStatus = "INACTIVE";
+        if (activeSub != null) {
+            subStatus = activeSub.getStatus().name();
+            planName = planRepository.findById(activeSub.getPlanId())
+                    .map(Plan::getName).orElse("DESCONHECIDO");
+        }
 
         return new StoreResponse(
                 store.getId(),
@@ -129,8 +237,8 @@ public class SuperAdminController {
                 store.getLogoUrl(),
                 store.getPrimaryColor(),
                 store.getActive(),
-                activeSub != null ? activeSub.getPlan().getName() : "SEM PLANO",
-                activeSub != null ? activeSub.getStatus().name() : "INACTIVE",
+                planName,
+                subStatus,
                 store.getCreatedAt());
     }
 }

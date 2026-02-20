@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "Admin - Financeiro")
 @SecurityRequirement(name = "bearerAuth")
-@PreAuthorize("hasAuthority('ADMIN_LOJA')")
+@PreAuthorize("hasAnyAuthority('ADMIN_LOJA', 'SUPER_ADMIN')")
 public class FinancialController {
 
     private final FinancialService financialService;
