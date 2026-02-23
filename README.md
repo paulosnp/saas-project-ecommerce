@@ -51,3 +51,4 @@ saas-project-ecommerce/
 - [ ] **Fase 6** — Frontend: Admin Panel (Painel do Lojista)
 - [ ] **Fase 7** — Frontend: Super Admin (Gestão da Plataforma, Assinaturas, Planos)
 - [ ] **Fase 8** — Frontend: Storefront (Loja Virtual do Cliente)
+- [ ] **Fase 9** — Frontend: Mobile (App em flutter com Dashboard para o lojista)
