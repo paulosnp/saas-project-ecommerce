@@ -4,9 +4,9 @@ import { ToastService } from '../../core/toast.service';
 import { StoreResponse, Page } from '../../core/models';
 
 @Component({
-    selector: 'app-stores',
-    standalone: true,
-    template: `
+  selector: 'app-stores',
+  standalone: true,
+  template: `
     <div class="sa-page-header">
       <h1 class="sa-page-title">Gestão de Lojas</h1>
       <p class="sa-page-subtitle">Gerencie todas as lojas da plataforma</p>
@@ -85,53 +85,53 @@ import { StoreResponse, Page } from '../../core/models';
       </div>
     }
   `,
-    styles: `
-    code { background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-size: 13px; color: #7c3aed; }
+  styles: `
+    code { background: var(--sa-primary-light); padding: 2px 8px; border-radius: 4px; font-size: 0.8125rem; color: var(--sa-primary); }
     .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .detail-item { display: flex; flex-direction: column; gap: 4px; }
-    .detail-label { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; }
-    .detail-item > span:last-child { font-size: 15px; font-weight: 500; }
-    .color-dot { width: 16px; height: 16px; border-radius: 4px; display: inline-block; border: 1px solid #e2e8f0; }
+    .detail-label { font-size: 0.6875rem; font-weight: 600; color: var(--sa-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .detail-item > span:last-child { font-size: 0.9375rem; font-weight: 500; color: var(--sa-text-primary); }
+    .color-dot { width: 16px; height: 16px; border-radius: 4px; display: inline-block; border: 1px solid var(--sa-border); }
   `
 })
 export class StoresComponent implements OnInit {
-    stores = signal<StoreResponse[]>([]);
-    currentPage = signal(0);
-    totalPages = signal(1);
-    selectedStore = signal<StoreResponse | null>(null);
+  stores = signal<StoreResponse[]>([]);
+  currentPage = signal(0);
+  totalPages = signal(1);
+  selectedStore = signal<StoreResponse | null>(null);
 
-    constructor(private api: ApiService, private toast: ToastService) { }
+  constructor(private api: ApiService, private toast: ToastService) { }
 
-    ngOnInit(): void { this.loadStores(); }
+  ngOnInit(): void { this.loadStores(); }
 
-    loadStores(): void {
-        this.api.getStores(this.currentPage()).subscribe(p => {
-            this.stores.set(p.content);
-            this.totalPages.set(p.totalPages || 1);
-        });
-    }
+  loadStores(): void {
+    this.api.getStores(this.currentPage()).subscribe(p => {
+      this.stores.set(p.content);
+      this.totalPages.set(p.totalPages || 1);
+    });
+  }
 
-    toggleStatus(store: StoreResponse): void {
-        this.api.toggleStoreStatus(store.id, !store.active).subscribe({
-            next: (updated) => {
-                this.stores.update(list => list.map(s => s.id === updated.id ? updated : s));
-                this.toast.success(updated.active ? 'Loja ativada' : 'Loja desativada');
-            },
-            error: () => this.toast.error('Erro ao atualizar status')
-        });
-    }
+  toggleStatus(store: StoreResponse): void {
+    this.api.toggleStoreStatus(store.id, !store.active).subscribe({
+      next: (updated) => {
+        this.stores.update(list => list.map(s => s.id === updated.id ? updated : s));
+        this.toast.success(updated.active ? 'Loja ativada' : 'Loja desativada');
+      },
+      error: () => this.toast.error('Erro ao atualizar status')
+    });
+  }
 
-    viewDetails(store: StoreResponse): void {
-        this.selectedStore.set(store);
-    }
+  viewDetails(store: StoreResponse): void {
+    this.selectedStore.set(store);
+  }
 
-    changePage(page: number): void {
-        this.currentPage.set(page);
-        this.loadStores();
-    }
+  changePage(page: number): void {
+    this.currentPage.set(page);
+    this.loadStores();
+  }
 
-    formatDate(iso: string): string {
-        if (!iso) return '-';
-        return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
-    }
+  formatDate(iso: string): string {
+    if (!iso) return '-';
+    return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
 }

@@ -34,24 +34,33 @@ import { ToastService } from '../../core/toast.service';
   styles: `
     .login-page {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+      position: relative; overflow: hidden;
+    }
+    .login-page::before {
+      content: ''; position: absolute; top: -50%; right: -20%;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%);
+    }
+    .login-page::after {
+      content: ''; position: absolute; bottom: -30%; left: -10%;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,0.08) 0%, transparent 70%);
     }
     .login-card {
       background: #fff; border-radius: 20px; padding: 48px 40px; width: 400px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.3); animation: scaleIn .3s ease;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35); animation: saScaleIn .3s ease;
+      position: relative; z-index: 1;
     }
     .login-brand { text-align: center; margin-bottom: 32px; }
     .login-icon {
       width: 180px; height: 80px; margin: 0 auto 16px;
       display: flex; align-items: center; justify-content: center;
     }
-    .login-logo {
-      width: 100%; height: 100%; object-fit: contain;
-    }
-    .login-brand h1 { font-size: 24px; font-weight: 800; color: #1e293b; }
-    .login-brand p { font-size: 14px; color: #64748b; margin-top: 4px; }
-    .login-btn { width: 100%; justify-content: center; padding: 12px; font-size: 15px; margin-top: 8px; }
-    @keyframes scaleIn { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .login-logo { width: 100%; height: 100%; object-fit: contain; }
+    .login-brand h1 { font-size: 1.375rem; font-weight: 800; color: #1e293b; }
+    .login-brand p { font-size: 0.875rem; color: #64748b; margin-top: 4px; }
+    .login-btn { width: 100%; justify-content: center; padding: 12px; font-size: 0.9375rem; margin-top: 8px; }
   `
 })
 export class LoginComponent {

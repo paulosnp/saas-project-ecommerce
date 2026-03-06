@@ -140,34 +140,28 @@ import { PlanResponse, PlanRequest } from '../../core/models';
     .plan-card { transition: all .2s; }
     .plan-card.inactive { opacity: .6; }
     .plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .plan-name { font-size: 20px; font-weight: 700; }
-    .plan-price { font-size: 28px; font-weight: 800; color: #7c3aed; margin-bottom: 8px; }
-    .plan-price span { font-size: 14px; font-weight: 400; color: #94a3b8; }
-    .plan-desc { font-size: 13px; color: #64748b; margin-bottom: 16px; }
+    .plan-name { font-size: 1.25rem; font-weight: 700; color: var(--sa-text-primary); }
+    .plan-price { font-size: 1.75rem; font-weight: 800; color: var(--sa-primary); margin-bottom: 8px; }
+    .plan-price span { font-size: 0.875rem; font-weight: 400; color: var(--sa-text-muted); }
+    .plan-order-badge { font-size: 0.75rem; font-weight: 600; color: var(--sa-text-secondary); margin-bottom: 4px; }
+    .plan-desc { font-size: 0.8125rem; color: var(--sa-text-secondary); margin-bottom: 16px; }
     .plan-limits { display: flex; flex-direction: column; gap: 8px; }
-    .plan-limit { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #334155; }
+    .plan-limit { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: var(--sa-text-primary); }
     .plan-actions { display: flex; gap: 8px; margin-top: 16px; }
     .plan-actions .sa-btn { flex: 1; justify-content: center; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
     .sa-btn-danger-ghost {
-      background: transparent; color: #ef4444; border: 1px solid #fecaca;
-      padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;
+      background: transparent; color: var(--sa-danger); border: 1px solid #FECACA;
+      padding: 8px 16px; border-radius: var(--sa-radius-md); cursor: pointer; font-size: 0.8125rem; font-weight: 600;
       transition: all .15s;
     }
-    .sa-btn-danger-ghost:hover { background: #fef2f2; border-color: #ef4444; }
-    .sa-btn-danger {
-      background: #ef4444; color: white; border: none;
-      padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;
-      transition: all .15s;
-    }
-    .sa-btn-danger:hover { background: #dc2626; }
-    .sa-btn-danger:disabled { opacity: .5; cursor: not-allowed; }
+    .sa-btn-danger-ghost:hover { background: var(--sa-danger-light); border-color: var(--sa-danger); }
     .delete-warning {
       display: flex; gap: 12px; padding: 16px;
-      background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; margin-bottom: 16px;
+      background: var(--sa-warning-light); border: 1px solid #FDE68A; border-radius: var(--sa-radius-md); margin-bottom: 16px;
     }
-    .warning-icon { font-size: 24px; }
-    .delete-warning p { font-size: 13px; color: #92400e; margin-top: 4px; line-height: 1.5; }
+    .warning-icon { font-size: 1.5rem; }
+    .delete-warning p { font-size: 0.8125rem; color: #92400E; margin-top: 4px; line-height: 1.5; }
   `
 })
 export class PlansComponent implements OnInit {
