@@ -77,25 +77,38 @@ public class PlanService {
         List<Subscription> allSubs = subscriptionRepository.findAllByPlanId(planId);
 
         if (!allSubs.isEmpty()) {
-            if (migrateToPlanId == null) {
-                long activeCount = allSubs.stream()
-                        .filter(s -> ACTIVE_STATUSES.contains(s.getStatus()))
-                        .count();
-                throw new IllegalStateException(
-                        "Existem " + activeCount + " assinaturas ativas e " +
-                                (allSubs.size() - activeCount) + " inativas neste plano. " +
-                                "Informe um plano de destino para migração.");
+            // Separate active vs inactive subscriptions
+            List<Subscription> activeSubs = allSubs.stream()
+                    .filter(s -> ACTIVE_STATUSES.contains(s.getStatus()))
+                    .toList();
+            List<Subscription> inactiveSubs = allSubs.stream()
+                    .filter(s -> !ACTIVE_STATUSES.contains(s.getStatus()))
+                    .toList();
+
+            if (!activeSubs.isEmpty()) {
+                // Active subscriptions require migration
+                if (migrateToPlanId == null) {
+                    throw new IllegalStateException(
+                            "Existem " + activeSubs.size() + " assinaturas ativas neste plano. " +
+                                    "Informe um plano de destino para migração.");
+                }
+
+                Plan targetPlan = planRepository.findById(migrateToPlanId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Plano destino", "id", migrateToPlanId));
+
+                if (!targetPlan.getActive()) {
+                    throw new IllegalStateException("O plano de destino está inativo.");
+                }
+
+                // Migrate active subscriptions
+                activeSubs.forEach(sub -> sub.setPlanId(migrateToPlanId));
+                subscriptionRepository.saveAll(activeSubs);
             }
 
-            Plan targetPlan = planRepository.findById(migrateToPlanId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Plano destino", "id", migrateToPlanId));
-
-            if (!targetPlan.getActive()) {
-                throw new IllegalStateException("O plano de destino está inativo.");
+            // Delete inactive subscriptions (CANCELLED, EXPIRED) so they don't block FK
+            if (!inactiveSubs.isEmpty()) {
+                subscriptionRepository.deleteAll(inactiveSubs);
             }
-
-            allSubs.forEach(sub -> sub.setPlanId(migrateToPlanId));
-            subscriptionRepository.saveAll(allSubs);
         }
 
         planRepository.delete(plan);
