@@ -8,15 +8,17 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 public record PlanRequest(
-        @NotBlank(message = "Nome do plano é obrigatório") @Size(max = 50, message = "Nome deve ter no máximo 50 caracteres") String name,
+                @NotBlank(message = "Nome do plano é obrigatório") @Size(max = 50, message = "Nome deve ter no máximo 50 caracteres") String name,
 
-        String description,
+                String description,
 
-        @NotNull(message = "Preço é obrigatório") @PositiveOrZero(message = "Preço deve ser zero ou positivo") BigDecimal price,
+                @NotNull(message = "Preço é obrigatório") @PositiveOrZero(message = "Preço deve ser zero ou positivo") BigDecimal price,
 
-        @NotNull(message = "Limite de produtos é obrigatório") Integer maxProducts,
+                @NotNull(message = "Limite de produtos é obrigatório") Integer maxProducts,
 
-        @NotNull(message = "Limite de pedidos/mês é obrigatório") Integer maxOrdersMonth,
+                @NotNull(message = "Limite de pedidos/mês é obrigatório") Integer maxOrdersMonth,
 
-        Boolean active) {
+                Boolean active,
+
+                Integer displayOrder) {
 }

@@ -29,13 +29,13 @@ public class PlanService {
             SubscriptionStatus.TRIAL);
 
     public List<PlanResponse> findAll() {
-        return planRepository.findAll().stream()
+        return planRepository.findAllByOrderByDisplayOrderAsc().stream()
                 .map(planMapper::toResponse)
                 .toList();
     }
 
     public List<PlanResponse> findAllActive() {
-        return planRepository.findAllByActiveTrue().stream()
+        return planRepository.findAllByActiveTrueOrderByDisplayOrderAsc().stream()
                 .map(planMapper::toResponse)
                 .toList();
     }

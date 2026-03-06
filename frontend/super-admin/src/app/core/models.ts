@@ -43,6 +43,7 @@ export interface PlanResponse {
     maxProducts: number;
     maxOrdersMonth: number;
     active: boolean;
+    displayOrder: number;
 }
 
 export interface PlanRequest {
@@ -52,6 +53,7 @@ export interface PlanRequest {
     maxProducts: number;
     maxOrdersMonth: number;
     active: boolean;
+    displayOrder: number;
 }
 
 export interface DashboardData {

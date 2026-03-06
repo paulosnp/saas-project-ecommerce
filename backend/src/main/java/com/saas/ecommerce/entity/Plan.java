@@ -43,4 +43,8 @@ public class Plan extends BaseEntity {
     @Builder.Default
     @Column(nullable = false)
     private Boolean active = true;
+
+    @Builder.Default
+    @Column(name = "display_order", nullable = false)
+    private Integer displayOrder = 0;
 }

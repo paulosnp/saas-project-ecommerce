@@ -13,11 +13,7 @@ import { ToastService } from '../../core/toast.service';
       <div class="login-card">
         <div class="login-header">
           <div class="login-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
+            <img src="logo.svg" alt="Logo" class="login-logo" />
           </div>
           <h1>Painel do Lojista</h1>
           <p>Acesse sua conta para gerenciar sua loja</p>
@@ -102,15 +98,18 @@ import { ToastService } from '../../core/toast.service';
     }
 
     .login-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-      border-radius: var(--radius-lg);
+      width: 180px;
+      height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
       margin: 0 auto 16px;
+    }
+
+    .login-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
     .login-header h1 {

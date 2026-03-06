@@ -4,14 +4,14 @@ import { AuthService } from '../../core/auth.service';
 import { ToastService } from '../../core/toast.service';
 
 @Component({
-    selector: 'app-login',
-    standalone: true,
-    imports: [FormsModule],
-    template: `
+  selector: 'app-login',
+  standalone: true,
+  imports: [FormsModule],
+  template: `
     <div class="login-page">
       <div class="login-card">
         <div class="login-brand">
-          <div class="login-icon">⚡</div>
+          <div class="login-icon"><img src="logo.svg" alt="Logo" class="login-logo" /></div>
           <h1>Super Admin</h1>
           <p>Painel de controle da plataforma</p>
         </div>
@@ -31,7 +31,7 @@ import { ToastService } from '../../core/toast.service';
       </div>
     </div>
   `,
-    styles: `
+  styles: `
     .login-page {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
@@ -42,9 +42,11 @@ import { ToastService } from '../../core/toast.service';
     }
     .login-brand { text-align: center; margin-bottom: 32px; }
     .login-icon {
-      width: 64px; height: 64px; margin: 0 auto 16px;
-      background: linear-gradient(135deg, #7c3aed, #a78bfa); border-radius: 16px;
-      display: flex; align-items: center; justify-content: center; font-size: 32px;
+      width: 180px; height: 80px; margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-logo {
+      width: 100%; height: 100%; object-fit: contain;
     }
     .login-brand h1 { font-size: 24px; font-weight: 800; color: #1e293b; }
     .login-brand p { font-size: 14px; color: #64748b; margin-top: 4px; }
@@ -53,28 +55,28 @@ import { ToastService } from '../../core/toast.service';
   `
 })
 export class LoginComponent {
-    email = '';
-    password = '';
-    loading = signal(false);
+  email = '';
+  password = '';
+  loading = signal(false);
 
-    constructor(private auth: AuthService, private toast: ToastService) { }
+  constructor(private auth: AuthService, private toast: ToastService) { }
 
-    onLogin(): void {
-        this.loading.set(true);
-        this.auth.login({ email: this.email, password: this.password }).subscribe({
-            next: (res) => {
-                try {
-                    this.auth.handleLogin(res);
-                    this.toast.success('Bem-vindo ao Super Admin!');
-                } catch (e: any) {
-                    this.toast.error(e.message || 'Erro ao fazer login');
-                    this.loading.set(false);
-                }
-            },
-            error: () => {
-                this.toast.error('Credenciais inválidas');
-                this.loading.set(false);
-            }
-        });
-    }
+  onLogin(): void {
+    this.loading.set(true);
+    this.auth.login({ email: this.email, password: this.password }).subscribe({
+      next: (res) => {
+        try {
+          this.auth.handleLogin(res);
+          this.toast.success('Bem-vindo ao Super Admin!');
+        } catch (e: any) {
+          this.toast.error(e.message || 'Erro ao fazer login');
+          this.loading.set(false);
+        }
+      },
+      error: () => {
+        this.toast.error('Credenciais inválidas');
+        this.loading.set(false);
+      }
+    });
+  }
 }

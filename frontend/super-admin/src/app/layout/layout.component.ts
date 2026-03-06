@@ -3,15 +3,14 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 
 @Component({
-    selector: 'app-layout',
-    standalone: true,
-    imports: [RouterOutlet, RouterLink, RouterLinkActive],
-    template: `
+  selector: 'app-layout',
+  standalone: true,
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  template: `
     <div class="sa-layout">
       <aside class="sa-sidebar">
         <div class="sa-sidebar-brand">
-          <div class="sa-brand-icon">⚡</div>
-          <span>Super Admin</span>
+          <img src="logo.svg" alt="Logo" class="sa-brand-logo" />
         </div>
         <nav class="sa-nav">
           <a routerLink="/dashboard" routerLinkActive="active" class="sa-nav-item">
@@ -46,7 +45,7 @@ import { AuthService } from '../core/auth.service';
       </main>
     </div>
   `,
-    styles: `
+  styles: `
     .sa-layout { display: flex; min-height: 100vh; }
     .sa-sidebar {
       width: 260px; background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
@@ -54,13 +53,10 @@ import { AuthService } from '../core/auth.service';
       height: 100vh; z-index: 100; box-shadow: 4px 0 20px rgba(0,0,0,.15);
     }
     .sa-sidebar-brand {
-      padding: 24px 20px; display: flex; align-items: center; gap: 12px;
-      border-bottom: 1px solid rgba(255,255,255,.1); font-size: 20px; font-weight: 700;
+      padding: 24px 20px; display: flex; align-items: center; justify-content: center;
+      border-bottom: 1px solid rgba(255,255,255,.1);
     }
-    .sa-brand-icon {
-      width: 40px; height: 40px; background: linear-gradient(135deg, #7c3aed, #a78bfa);
-      border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;
-    }
+    .sa-brand-logo { height: 56px; width: auto; object-fit: contain; }
     .sa-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
     .sa-nav-item {
       display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px;
@@ -92,5 +88,5 @@ import { AuthService } from '../core/auth.service';
   `
 })
 export class LayoutComponent {
-    constructor(public auth: AuthService) { }
+  constructor(public auth: AuthService) { }
 }

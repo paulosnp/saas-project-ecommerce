@@ -27,6 +27,7 @@ import { PlanResponse, PlanRequest } from '../../core/models';
             </span>
           </div>
           <div class="plan-price">R$ {{ plan.price.toFixed(2).replace('.', ',') }}<span>/mês</span></div>
+          <div class="plan-order-badge">Ordem: {{ plan.displayOrder }}</div>
           <p class="plan-desc">{{ plan.description }}</p>
           <div class="plan-limits">
             <div class="plan-limit"><span>📦</span> {{ plan.maxProducts }} produtos</div>
@@ -69,6 +70,10 @@ import { PlanResponse, PlanRequest } from '../../core/models';
               <div class="sa-form-group">
                 <label class="sa-label">Máx. Pedidos/Mês</label>
                 <input class="sa-input" type="number" [(ngModel)]="form.maxOrdersMonth">
+              </div>
+              <div class="sa-form-group">
+                <label class="sa-label">Ordem de Exibição</label>
+                <input class="sa-input" type="number" [(ngModel)]="form.displayOrder" min="0">
               </div>
             </div>
             <div class="sa-form-group">
@@ -169,7 +174,7 @@ export class PlansComponent implements OnInit {
   plans = signal<PlanResponse[]>([]);
   showModal = signal(false);
   editId = signal<string | null>(null);
-  form: PlanRequest = { name: '', description: '', price: 0, maxProducts: 0, maxOrdersMonth: 0, active: true };
+  form: PlanRequest = { name: '', description: '', price: 0, maxProducts: 0, maxOrdersMonth: 0, active: true, displayOrder: 0 };
 
   // Delete state
   showDeleteModal = signal(false);
@@ -187,13 +192,13 @@ export class PlansComponent implements OnInit {
   }
 
   openCreate(): void {
-    this.form = { name: '', description: '', price: 0, maxProducts: 0, maxOrdersMonth: 0, active: true };
+    this.form = { name: '', description: '', price: 0, maxProducts: 0, maxOrdersMonth: 0, active: true, displayOrder: 0 };
     this.editId.set(null);
     this.showModal.set(true);
   }
 
   openEdit(plan: PlanResponse): void {
-    this.form = { name: plan.name, description: plan.description, price: plan.price, maxProducts: plan.maxProducts, maxOrdersMonth: plan.maxOrdersMonth, active: plan.active };
+    this.form = { name: plan.name, description: plan.description, price: plan.price, maxProducts: plan.maxProducts, maxOrdersMonth: plan.maxOrdersMonth, active: plan.active, displayOrder: plan.displayOrder };
     this.editId.set(plan.id);
     this.showModal.set(true);
   }

@@ -9,4 +9,8 @@ import java.util.UUID;
 public interface PlanRepository extends JpaRepository<Plan, UUID> {
 
     List<Plan> findAllByActiveTrue();
+
+    List<Plan> findAllByOrderByDisplayOrderAsc();
+
+    List<Plan> findAllByActiveTrueOrderByDisplayOrderAsc();
 }

@@ -179,5 +179,6 @@ export interface PlanResponse {
     maxProducts: number;
     maxOrdersMonth: number;
     active: boolean;
+    displayOrder: number;
 }
 
