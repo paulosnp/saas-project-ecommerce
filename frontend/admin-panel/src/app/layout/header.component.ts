@@ -104,7 +104,7 @@ import { MySubscriptionResponse } from '../core/models';
       left: var(--sidebar-width);
       right: 0;
       height: var(--header-height);
-      background: var(--bg-card);
+      background: linear-gradient(180deg, var(--bg-page) 0%, var(--bg-card) 100%);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;

@@ -101,32 +101,32 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       flex-direction: column;
       z-index: 100;
       transition: transform 0.3s ease;
+      border-right: 1px solid var(--border);
     }
 
     .sidebar-brand {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 24px 16px;
     }
 
     .brand-logo {
-      height: 48px;
+      height: 72px;
       width: auto;
       object-fit: contain;
     }
 
     .nav-section {
-      padding: 16px 12px 0;
+      padding: 8px 16px 0;
     }
 
     .nav-label {
       display: block;
-      padding: 0 16px 8px;
+      padding: 12px 12px 6px;
       font-size: 0.625rem;
       font-weight: 700;
-      color: rgba(255, 255, 255, 0.3);
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
@@ -141,18 +141,19 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 10px 16px;
+      padding: 10px 12px;
       border-radius: var(--radius-md);
       color: var(--text-sidebar);
       font-size: 0.875rem;
       font-weight: 500;
       text-decoration: none;
       transition: all 0.15s ease;
+      position: relative;
     }
 
     .nav-item:hover {
       background: var(--bg-sidebar-hover);
-      color: white;
+      color: var(--text-primary);
     }
 
     .nav-item.active {
@@ -161,7 +162,19 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       font-weight: 600;
     }
 
-    .nav-item.active svg { stroke: var(--text-sidebar-active); }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: -16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 24px;
+      background: var(--primary);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .nav-item.active svg { stroke: var(--primary); }
 
     @media (max-width: 768px) {
       .sidebar { transform: translateX(-100%); }

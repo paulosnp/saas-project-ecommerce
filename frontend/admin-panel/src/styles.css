@@ -1,7 +1,7 @@
-/* ===== CSS Design System ===== */
+/* ===== Admin Panel — Design System (Donezo-style) ===== */
 
 /* --- Google Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 /* --- Light Theme (default) --- */
 :root {
@@ -11,6 +11,7 @@
   --primary-light: #FFF7ED;
   --primary-100: #FFEDD5;
   --primary-200: #FED7AA;
+  --primary-dark: #C2410C;
 
   /* Success / Danger / Warning / Info */
   --success: #22C55E;
@@ -23,39 +24,41 @@
   --info-light: #EFF6FF;
 
   /* Backgrounds */
-  --bg-page: #F8FAFC;
+  --bg-page: #F5F0EB;
   --bg-card: #FFFFFF;
-  --bg-sidebar: #1E293B;
-  --bg-sidebar-hover: #334155;
-  --bg-sidebar-active: rgba(249, 115, 22, 0.15);
-  --bg-input: #FFFFFF;
+  --bg-sidebar: #FFFFFF;
+  --bg-sidebar-hover: #F8F8F6;
+  --bg-sidebar-active: #FFF7ED;
+  --bg-input: #F8F8F6;
 
   /* Text */
-  --text-primary: #0F172A;
-  --text-secondary: #64748B;
-  --text-muted: #94A3B8;
-  --text-sidebar: #CBD5E1;
-  --text-sidebar-active: #F97316;
+  --text-primary: #1A1A1A;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --text-sidebar: #6B7280;
+  --text-sidebar-active: #1A1A1A;
   --text-on-primary: #FFFFFF;
 
   /* Borders */
-  --border: #E2E8F0;
+  --border: #E8E5E0;
   --border-focus: #F97316;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.02);
 
   /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
   --radius-full: 9999px;
 
   /* Spacing */
-  --sidebar-width: 260px;
+  --sidebar-width: 240px;
   --header-height: 64px;
 
   /* Transitions */
@@ -71,21 +74,22 @@
   --primary-100: rgba(249, 115, 22, 0.18);
   --primary-200: rgba(249, 115, 22, 0.25);
 
-  --bg-page: #0F172A;
-  --bg-card: #1E293B;
-  --bg-sidebar: #0F172A;
-  --bg-sidebar-hover: #1E293B;
-  --bg-input: #1E293B;
+  --bg-page: #1A1A1A;
+  --bg-card: #262626;
+  --bg-sidebar: #262626;
+  --bg-sidebar-hover: #333333;
+  --bg-input: #333333;
 
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  --text-primary: #F5F5F5;
+  --text-secondary: #A3A3A3;
+  --text-muted: #737373;
 
-  --border: #334155;
+  --border: #404040;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 /* --- Reset & Base --- */
@@ -123,8 +127,8 @@ a:hover {
 
 /* --- Scrollbar --- */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -132,12 +136,12 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
+  background: #D4D4D4;
   border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: #A3A3A3;
 }
 
 /* --- Utility Classes --- */
@@ -178,11 +182,10 @@ a:hover {
 /* --- Cards --- */
 .card {
   background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
   padding: 24px;
-  transition: background var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-fast);
+  transition: background var(--transition-normal), box-shadow var(--transition-fast);
 }
 
 .card:hover {
@@ -219,7 +222,7 @@ a:hover {
 .btn-primary:hover:not(:disabled) {
   background: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
 }
 
 .btn-secondary {
@@ -245,7 +248,7 @@ a:hover {
 }
 
 .btn-sm {
-  padding: 6px 12px;
+  padding: 7px 14px;
   font-size: 0.8125rem;
 }
 
@@ -276,14 +279,14 @@ a:hover {
 
 .form-group label {
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-secondary);
 }
 
 .form-input {
   padding: 10px 14px;
   font-family: inherit;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   background: var(--bg-input);
   color: var(--text-primary);
   border: 1px solid var(--border);
@@ -294,7 +297,8 @@ a:hover {
 
 .form-input:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+  background: var(--bg-card);
 }
 
 .form-input.error {
@@ -309,7 +313,7 @@ a:hover {
 
 select.form-input {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748B' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 5.646a.5.5 0 0 1 .708 0L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236B7280' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 5.646a.5.5 0 0 1 .708 0L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 36px;
@@ -318,7 +322,6 @@ select.form-input {
 /* --- Tables --- */
 .table-wrapper {
   overflow-x: auto;
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--bg-card);
 }
@@ -331,12 +334,11 @@ table {
 table th {
   text-align: left;
   padding: 12px 16px;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--text-muted);
-  background: var(--bg-page);
   border-bottom: 1px solid var(--border);
 }
 
@@ -361,7 +363,7 @@ table tbody tr:hover td {
   display: inline-flex;
   align-items: center;
   padding: 4px 10px;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   border-radius: var(--radius-full);
   text-transform: uppercase;
@@ -389,7 +391,7 @@ table tbody tr:hover td {
 }
 
 .badge-neutral {
-  background: var(--bg-page);
+  background: #F5F5F4;
   color: var(--text-secondary);
 }
 
@@ -404,10 +406,10 @@ table tbody tr:hover td {
 }
 
 .page-header h1 {
-  font-size: 1.625rem;
+  font-size: 1.75rem;
   font-weight: 800;
   color: var(--text-primary);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
 }
 
 .page-header p {
@@ -420,8 +422,8 @@ table tbody tr:hover td {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -432,8 +434,8 @@ table tbody tr:hover td {
 
 .modal-content {
   background: var(--bg-card);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 480px;
   max-height: 90vh;
@@ -450,8 +452,8 @@ table tbody tr:hover td {
 }
 
 .modal-header h2 {
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: 1.0625rem;
+  font-weight: 700;
 }
 
 .modal-body {
@@ -485,6 +487,7 @@ table tbody tr:hover td {
   color: var(--text-primary);
   cursor: pointer;
   transition: all var(--transition-fast);
+  font-family: inherit;
 }
 
 .pagination button:hover:not(:disabled) {
@@ -586,9 +589,8 @@ table tbody tr:hover td {
   align-items: center;
   gap: 12px;
   padding: 14px 20px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--bg-card);
-  border: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
   font-size: 0.875rem;
   font-weight: 500;
